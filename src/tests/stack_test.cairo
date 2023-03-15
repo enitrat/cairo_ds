@@ -4,6 +4,7 @@ use traits::Into;
 use traits::TryInto;
 use option::OptionTrait;
 use cairo_ds::data_structures::stack::StackTrait;
+use cairo_ds::data_structures::stack::Stack;
 // Internal imports
 
 #[test]
@@ -95,7 +96,11 @@ fn test_stack_u32() {
 
     let result_len = stack.len();
     let result_is_empty = stack.is_empty();
+    let Stack{mut items } = stack;
+    let stack_val_1 = *items.at(0_usize);
+    stack = Stack { items: items };
 
+    assert(stack_val_1 == val_1, 'wrong result');
     assert(result_is_empty == false, 'must not be empty');
     assert(result_len == 2_usize, 'len should be 2');
 
