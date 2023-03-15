@@ -23,7 +23,7 @@ const ZERO_USIZE: usize = 0_usize;
 
 
 struct Stack<T> {
-    elements: Array::<T>, 
+    items: Array<T>,
 }
 
 impl StackDrop<T, impl TDrop: Drop::<T>> of Drop::<Stack::<T>>;
@@ -56,9 +56,9 @@ impl StackImpl<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>> of StackTrait::<
     /// * `self` - The stack to push the value onto.
     /// * `value` - The value to push onto the stack.
     fn push(ref self: Stack<T>, value: T) {
-        let Stack{mut elements } = self;
-        elements.append(value);
-        self = Stack { elements }
+        let Stack{mut items } = self;
+        items.append(value);
+        self = Stack { items }
     }
 
 
@@ -72,15 +72,15 @@ impl StackImpl<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>> of StackTrait::<
             return Option::None(());
         }
         // Deconstruct the stack struct because we consume it
-        let Stack{elements: mut elements } = self;
-        let stack_len = elements.len();
+        let Stack{items: mut items } = self;
+        let stack_len = items.len();
         let last_idx = stack_len - 1_usize;
 
-        let sliced_elements = array_slice(ref elements, begin: 0_usize, end: last_idx);
+        let sliced_items = array_slice(ref items, begin: 0_usize, end: last_idx);
 
-        let value = elements.at(last_idx);
+        let value = items.at(last_idx);
         // Update the returned stack with the sliced array
-        self = Stack { elements: sliced_elements };
+        self = Stack { items: sliced_items };
         Option::Some(*value)
     }
 
@@ -92,7 +92,7 @@ impl StackImpl<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>> of StackTrait::<
         if self.is_empty() {
             return Option::None(());
         }
-        Option::Some(*self.elements.at(self.elements.len() - 1_usize))
+        Option::Some(*self.items.at(self.items.len() - 1_usize))
     }
 
     /// Returns the number of items in the stack.
@@ -100,7 +100,7 @@ impl StackImpl<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>> of StackTrait::<
     /// Returns
     /// * usize The number of items in the stack.
     fn len(self: @Stack<T>) -> usize {
-        self.elements.len()
+        self.items.len()
     }
 
     /// Returns true if the stack is empty.
@@ -114,6 +114,6 @@ impl StackImpl<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>> of StackTrait::<
 
 #[inline(always)]
 fn stack_new<T>() -> Stack<T> {
-    let mut elements = ArrayTrait::<T>::new();
-    Stack { elements }
+    let mut items = ArrayTrait::<T>::new();
+    Stack { items }
 }
