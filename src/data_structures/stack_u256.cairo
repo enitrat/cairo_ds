@@ -80,15 +80,11 @@ impl StackImpl of StackTrait {
     /// Returns
     /// * Option<u256> The popped item, or None if the stack is empty.
     fn pop(ref self: Stack) -> Option<u256> {
-        match self.len() == ZERO_USIZE {
-            bool::False(_) => {
-                let item = self.get_u256();
-                self.len -= 1_usize;
-                item
-            },
-            bool::True(_) => {
-                Option::None(())
-            },
+        if self.len() == 0_usize {
+            Option::None(())
+        } else {
+            self.len -= 1_usize;
+            self.peek_u256()
         }
     }
 
@@ -96,14 +92,10 @@ impl StackImpl of StackTrait {
     /// Returns
     /// * Option<u256> The top item, or None if the stack is empty.
     fn peek(ref self: Stack) -> Option<u256> {
-        match self.len() == ZERO_USIZE {
-            bool::False(_) => {
-                let item = self.get_u256();
-                item
-            },
-            bool::True(_) => {
-                Option::None(())
-            },
+        if self.len() == 0_usize {
+            Option::None(())
+        } else {
+            self.peek_u256()
         }
     }
 
@@ -129,7 +121,7 @@ impl StackImpl of StackTrait {
 trait StackU256HelperTrait {
     fn dict_len(ref self: Stack) -> felt252;
     fn insert_u256(ref self: Stack, item: u256) -> ();
-    fn get_u256(ref self: Stack) -> Option<u256>;
+    fn peek_u256(ref self: Stack) -> Option<u256>;
 }
 
 impl StackU256HelperImpl of StackU256HelperTrait {
@@ -143,7 +135,7 @@ impl StackU256HelperImpl of StackU256HelperTrait {
         self.items.insert(dict_len + 1, item.high);
     }
 
-    fn get_u256(ref self: Stack) -> Option<u256> {
+    fn peek_u256(ref self: Stack) -> Option<u256> {
         if self.dict_len() == 0 {
             Option::None(())
         } else {

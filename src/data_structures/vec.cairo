@@ -5,7 +5,13 @@
 //! use cairo_ds::data_structures::vec::VecTrait;
 //!
 //! // Create a new stack instance.
-//! let mut vec = VecTrait::new();
+//! let mut vec = VecTrait::<u128>::new();
+//! // Push some items onto the stack.
+//! vec.push(1_u128);
+//! vec.push(2_u128);
+//! // Pop some items off the stack
+//! let pop_result:Option<u128> = vec.pop();
+//! ...
 //! ```
 
 // Core lib imports
@@ -15,24 +21,15 @@ use traits::Into;
 use result::ResultTrait;
 use array::ArrayTrait;
 
-const ZERO_USIZE: usize = 0_usize;
 
 struct Vec<T> {
     items: Felt252Dict<T>,
     len: usize,
 }
 
-struct SquashedVec<T> {
-    items: SquashedFelt252Dict<T>,
-    len: usize,
-}
-
-impl SquashedVecDrop<T, impl TDrop: Drop::<T>> of Drop::<SquashedVec::<T>>;
-
 impl DestructVec<T, impl TDrop: Drop::<T>> of Destruct::<Vec<T>> {
     fn destruct(self: Vec<T>) nopanic {
-        let Vec{mut items, len } = self;
-        items.squash();
+        self.items.squash();
     }
 }
 
@@ -43,12 +40,10 @@ trait VecTrait<T> {
     fn at(ref self: Vec<T>, index: usize) -> T;
     fn push(ref self: Vec<T>, value: T) -> ();
     fn set(ref self: Vec<T>, index: usize, value: T);
-    fn len(ref self: Vec<T>) -> usize;
+    fn len(self: @Vec<T>) -> usize;
 }
 
 impl VecImpl<T, impl TDrop: Drop::<T>> of VecTrait::<T> {
-    //TODO report inline(always) bug
-    // #[inline(always)]
     /// Creates a new Vec instance.
     /// Returns
     /// * Stack The new stack instance.
@@ -118,9 +113,8 @@ impl VecImpl<T, impl TDrop: Drop::<T>> of VecTrait::<T> {
     /// * self The vec instance.
     /// Returns
     /// * usize The length of the vec.
-    fn len(ref self: Vec<T>) -> usize {
-        //TODO pass by snapshot when bug fixed
-        self.len
+    fn len(self: @Vec<T>) -> usize {
+        *(self.len)
     }
 }
 

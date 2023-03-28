@@ -20,9 +20,11 @@ fn vec_new_test() {
 #[available_gas(2000000)]
 fn vec_len_test() {
     let mut vec = VecTrait::<u128>::new();
-    vec.len = 10_usize;
+    //TODO this throws an error
+    // vec.len = 10_usize;
+    vec.push(10_u128);
     let result_len = vec.len();
-    assert(result_len == 10_usize, 'vec length should be 10');
+    assert(result_len == 1_usize, 'vec length should be 10');
 }
 
 #[test]

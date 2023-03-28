@@ -42,8 +42,7 @@ fn stack_push_test() {
     let stack_val_1 = u256 { low: low, high: high };
     assert(result_is_empty == false, 'must not be empty');
     assert(result_len == 2_usize, 'len should be 2');
-//TODO error dangling reference
-// assert(stack_val_1 == val_1, 'wrong result');
+    assert(stack_val_1 == val_1, 'wrong result');
 }
 
 #[test]
@@ -64,10 +63,18 @@ fn stack_peek_test() {
     let val_2: u256 = 1.into();
     stack.push(val_1);
     stack.push(val_2);
-    let last_item = stack.peek();
-//TODO dangling reference
-// assert(last_item == val_2, 'wrong result');
+    let last_item = stack.peek().unwrap();
+    assert(last_item == val_2, 'wrong result');
 }
+
+#[test]
+#[available_gas(2000000)]
+fn stack_peek_empty_test() {
+    let mut stack = StackTrait::new();
+    let result = stack.peek();
+    assert(result.is_none(), 'should return None');
+}
+
 #[test]
 #[available_gas(2000000)]
 fn stack_pop_test() {
@@ -77,17 +84,17 @@ fn stack_pop_test() {
 
     stack.push(val_1);
     stack.push(val_2);
-    let value = stack.pop();
-    match value {
-        Option::Some(result) => {
-            let result_len = stack.len();
-            assert(result_len == 1_usize, 'should remove item');
-            //TODO fix dangling reference
-            // assert(result == val_2, 'wrong result');
-        },
-        Option::None(_) => {
-            assert(0 == 1, 'should return a value');
-        },
-    };
+    let result = stack.pop().unwrap();
+    let result_len = stack.len();
+    assert(result_len == 1_usize, 'should remove item');
+    assert(result == val_2, 'wrong result');
+}
+
+#[test]
+#[available_gas(2000000)]
+fn stack_pop_empty_test() {
+    let mut stack = StackTrait::new();
+    let result = stack.pop();
+    assert(result.is_none(), 'should return None');
 }
 
