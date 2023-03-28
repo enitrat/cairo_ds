@@ -24,7 +24,7 @@ fn fill_array<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>>(
 ) {
     // Check if out of gas.
     // TODO: Remove when automatically handled by compiler.
-    match gas::get_gas() {
+    match gas::withdraw_gas() {
         Option::Some(_) => {},
         Option::None(_) => {
             let mut data = ArrayTrait::new();
@@ -41,6 +41,5 @@ fn fill_array<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>>(
     }
     let element = src.at(index);
     dst.append(*element);
-
     fill_array(ref dst, ref src, index + 1_u32, count - 1_u32)
 }

@@ -61,7 +61,7 @@ fn stack_peek_test() {
 }
 
 #[test]
-#[available_gas(2000000)]
+// #[available_gas(2000000)]
 fn stack_pop_test() {
     let mut stack = StackTrait::<u256>::new();
     let val_1: u256 = 1.into();
@@ -69,8 +69,8 @@ fn stack_pop_test() {
 
     stack.push(val_1);
     stack.push(val_2);
-
     let value = stack.pop();
+    // TODO: bug variable dangling
     match value {
         Option::Some(result) => {
             assert(result == val_2, 'wrong result');
@@ -79,11 +79,9 @@ fn stack_pop_test() {
             assert(0 == 1, 'should return a value');
         },
     };
-
     let result_len = stack.len();
     assert(result_len == 1_usize, 'should remove item');
 }
-
 #[test]
 #[available_gas(2000000)]
 fn test_stack_u32() {
@@ -117,3 +115,4 @@ fn test_stack_u32() {
     let result_len = stack.len();
     assert(result_len == 1_usize, 'should remove item');
 }
+

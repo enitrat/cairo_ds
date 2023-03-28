@@ -23,7 +23,7 @@ const ZERO_USIZE: usize = 0_usize;
 
 
 struct Stack<T> {
-    items: Array<T>,
+    items: Array<T>, 
 }
 
 impl StackDrop<T, impl TDrop: Drop::<T>> of Drop::<Stack::<T>>;
@@ -71,17 +71,16 @@ impl StackImpl<T, impl TCopy: Copy::<T>, impl TDrop: Drop::<T>> of StackTrait::<
         if self.is_empty() {
             return Option::None(());
         }
-        // Deconstruct the stack struct because we consume it
-        let Stack{items: mut items } = self;
-        let stack_len = items.len();
+        // let stack_len = stack.items.len();
         let last_idx = stack_len - 1_usize;
-
-        let sliced_items = array_slice(ref items, begin: 0_usize, end: last_idx);
-
         let value = items.at(last_idx);
-        // Update the returned stack with the sliced array
-        self = Stack { items: sliced_items };
+        let sliced_items = array_slice(ref items, begin: 0_usize, end: last_idx);
+        self = Stack { items: items };
         Option::Some(*value)
+    // let value = items.at(last_idx);
+    // // Update the returned stack with the sliced array
+    // self = Stack { items: items };
+    // Option::Some(*value)
     }
 
     /// Returns the last item from the stack without removing it, or None if the stack is empty.

@@ -9,7 +9,7 @@
 //! ```
 
 // Core lib imports
-use dict::DictFelt252ToTrait;
+use dict::Felt252DictTrait;
 use option::OptionTrait;
 use traits::Into;
 use result::ResultTrait;
@@ -20,12 +20,12 @@ use serde::Serde;
 const ZERO_USIZE: usize = 0_usize;
 
 struct Stack<T> {
-    items: DictFelt252To<felt252>,
+    items: Felt252Dict<felt252>,
     len: usize,
 }
 
 struct SquashedStack<T> {
-    items: SquashedDictFelt252To<felt252>,
+    items: SquashedFelt252Dict<felt252>,
     len: usize,
 }
 
@@ -47,7 +47,7 @@ impl StackImpl<T, impl TDrop: Drop::<T>, impl TSerde: Serde::<T>> of StackTrait:
     /// Returns
     /// * Stack The new stack instance.
     fn new() -> Stack<T> {
-        let items = DictFelt252ToTrait::<felt252>::new();
+        let items = Felt252DictTrait::<felt252>::new();
         Stack { items, len: 0_usize }
     }
 
@@ -135,9 +135,9 @@ impl StackImpl<T, impl TDrop: Drop::<T>, impl TSerde: Serde::<T>> of StackTrait:
 
 trait StackDictSerdeTrait<T> {
     // fn dict_len(ref self: Stack<T>) -> felt252;
-    fn insert_type(ref self: DictFelt252To<felt252>, stack_index: usize, item: T) -> ();
+    fn insert_type(ref self: Felt252Dict<felt252>, stack_index: usize, item: T) -> ();
 // fn insert_loop(
-//     ref self: DictFelt252To<felt252>,
+//     ref self: Felt252Dict<felt252>,
 //     serialized_items: @Array<felt252>,
 //     dict_index: felt252,
 //     remaining: usize
@@ -147,7 +147,7 @@ trait StackDictSerdeTrait<T> {
 impl StackDictSerdeImpl<T,
 impl TDrop: Drop::<T>,
 impl TSerde: Serde::<T>> of StackDictSerdeTrait::<T> {
-    fn insert_type(ref self: DictFelt252To<felt252>, stack_index: usize, item: T) {
+    fn insert_type(ref self: Felt252Dict<felt252>, stack_index: usize, item: T) {
         let mut serialized = ArrayTrait::new();
         Serde::<T>::serialize(ref serialized, item);
         let type_size: usize = serialized.len();
@@ -158,13 +158,13 @@ impl TSerde: Serde::<T>> of StackDictSerdeTrait::<T> {
 
 //TODO recursive loop danglling reference error. update when fixed
 fn insert_loop(
-    ref self: DictFelt252To<felt252>,
+    ref self: Felt252Dict<felt252>,
     serialized_items: @Array<felt252>,
     index: felt252,
     remaining: usize
 ) { // // Check if out of gas.
 // // TODO: Remove when automatically handled by compiler.
-// match gas::get_gas() {
+// match gas::withdraw_gas() {
 //     Option::Some(_) => {
 //         if remaining == 0_usize {
 //             return ();
@@ -191,7 +191,7 @@ fn insert_loop(
 // }
 }
 fn get_loop(
-    ref self: DictFelt252To<felt252>,
+    ref self: Felt252Dict<felt252>,
     ref deserialized_items: Array<felt252>,
     index: felt252,
     remaining: usize
